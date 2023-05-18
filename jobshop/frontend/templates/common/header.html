@@ -1,0 +1,277 @@
+<!doctype html>
+<!--
+* Tabler - Premium and Open Source dashboard template with responsive and high quality UI.
+* @version 1.0.0-beta5
+* @link https://tabler.io
+* Copyright 2018-2022 The Tabler Authors
+* Copyright 2018-2022 codecalm.net Paweł Kuna
+* Licensed under MIT (https://github.com/tabler/tabler/blob/master/LICENSE)
+-->
+<html lang="en">
+    <head>
+        <meta charset="utf-8"/>
+        <meta name="viewport" content="width=device-width, initial-scale=1,
+            viewport-fit=cover"/>
+        <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+        <title>섬유공정시스템</title>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+        <!-- CSS files -->
+        <link href="/static/css/tabler.min.css" rel="stylesheet"/>
+        <link href="/static/css/tabler-flags.min.css" rel="stylesheet"/>
+        <link href="/static/css/tabler-payments.min.css" rel="stylesheet"/>
+        <link href="/static/css/tabler-vendors.min.css" rel="stylesheet"/>
+        <link href="/static/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+        <link rel="stylesheet" href="/static/js/flatpickr/flatpickr.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/multiple-select/multiple-select.css">
+        <link rel="stylesheet" href="/static/css/css-loader/css-loader.css"/>
+        <link href="/static/css/demo.min.css" rel="stylesheet"/>
+        <link src="/static/vendor/fullcalendar/lib/main.css">
+        <link href="/static/vendor/calendar/core/main.css" rel="stylesheet" type="text/css">
+        <link href="/static/vendor/calendar/daygrid/main.css" rel="stylesheet" type="text/css">
+        <script type="text/javascript" src="https://rawgit.com/nnnick/Chart.js/v1.0.2/Chart.min.js"></script>
+    </head>
+    <body>
+    <div class="wrapper">
+      <header class="navbar navbar-expand-md navbar-light d-print-none">
+        <div class="container-xl">
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar-menu">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <h1 class="navbar-brand navbar-brand-autodark d-none-navbar-horizontal pe-0 pe-md-3">
+            <a href="/">
+              <img src="/static/logo.png" width="110" height="32" alt="Tabler" class="navbar-brand-image">
+            </a>
+            <div class="nav-item pagename d-none d-md-flex me-3">
+              <div class="btn-list">
+                {{ path }}
+              </div>
+            </div>
+          </h1>
+          <div class="navbar-nav flex-row order-md-last">
+            <a href="?theme=dark" class="nav-link px-0 hide-theme-dark" title="Enable dark mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+              <!-- Download SVG icon from http://tabler-icons.io/i/moon -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1 -8.313 -12.454z" /></svg>
+            </a>
+            <a href="?theme=light" class="nav-link px-0 hide-theme-light" title="Enable light mode" data-bs-toggle="tooltip" data-bs-placement="bottom">
+              <!-- Download SVG icon from http://tabler-icons.io/i/sun -->
+              <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><circle cx="12" cy="12" r="4" /><path d="M3 12h1m8 -9v1m8 8h1m-9 8v1m-6.4 -15.4l.7 .7m12.1 -.7l-.7 .7m0 11.4l.7 .7m-12.1 -.7l-.7 .7" /></svg>
+            </a>
+            <div class="nav-item dropdown d-none d-md-flex me-3">
+              <a href="#" class="nav-link px-0" data-bs-toggle="dropdown" tabindex="-1" aria-label="Show notifications">
+                <!-- Download SVG icon from http://tabler-icons.io/i/bell -->
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M10 5a2 2 0 0 1 4 0a7 7 0 0 1 4 6v3a4 4 0 0 0 2 3h-16a4 4 0 0 0 2 -3v-3a7 7 0 0 1 4 -6" /><path d="M9 17v1a3 3 0 0 0 6 0v-1" /></svg>
+                <span class="badge bg-red"></span>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end dropdown-menu-card">
+                <div class="card">
+                  <div class="card-body">
+                    Lorem ipsum dolor sit amet, consectetur adipisicing elit. Accusamus ad amet consectetur exercitationem fugiat in ipsa ipsum, natus odio quidem quod repudiandae sapiente. Amet debitis et magni maxime necessitatibus ullam.
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="nav-item dropdown">
+              <a href="#" class="nav-link d-flex lh-1 text-reset p-0" data-bs-toggle="dropdown" aria-label="Open user menu">
+                <span class="avatar avatar-sm" style="background-image: url(/static/avatars/undraw_profile.png)"></span>
+                <div class="d-none d-xl-block ps-2">
+                  <div>{{ user.username }}</div>
+                  <div class="mt-1 small text-muted">{{ user.groups.all.0.name }}</div>
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end dropdown-menu-arrow">
+                <!--<a href="#" class="dropdown-item">Set status</a>
+                <a href="#" class="dropdown-item">Profile & account</a>
+                <a href="#" class="dropdown-item">Feedback</a>
+                <div class="dropdown-divider"></div>
+                <a href="#" class="dropdown-item">Settings</a>-->
+                <a href="{% url 'common:login' %}" class="dropdown-item">Logout</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </header>
+      <div class="navbar-expand-md">
+        <div class="collapse navbar-collapse" id="navbar-menu">
+          <div class="navbar navbar-light">
+            <div class="container-xl">
+              <ul class="navbar-nav">
+                <li class="nav-item {% if request.resolver_match.url_name == 'home' %} active {% endif %}">
+                  <a class="nav-link" href="/" >
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/home -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="5 12 3 12 12 3 21 12 19 12" /><path d="M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2 -2v-7" /><path d="M9 21v-6a2 2 0 0 1 2 -2h2a2 2 0 0 1 2 2v6" /></svg>
+                    </span>
+                    <span class="nav-link-title">
+                      대시보드
+                    </span>
+                  </a>
+                </li>
+                <li class="nav-item dropdown {% if request.resolver_match.url_name == 'order.home' or request.resolver_match.url_name == 'order.order_list_view' %} active {% endif %}">
+                  <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/package -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="12 3 20 7.5 20 16.5 12 21 4 16.5 4 7.5 12 3" /><line x1="12" y1="12" x2="20" y2="7.5" /><line x1="12" y1="12" x2="12" y2="21" /><line x1="12" y1="12" x2="4" y2="7.5" /><line x1="16" y1="5.25" x2="8" y2="9.75" /></svg>
+                    </span>
+                    <span class="nav-link-title">
+                      주문정보
+                    </span>
+                  </a>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-menu-columns">
+                      <div class="dropdown-menu-column">
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'order.home' %} active {% endif %}" href="/order/" >
+                          주문 등록
+                        </a>
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'order.order_list_view' %} active {% endif %}" href="/order/list/" >
+                          주문 검색
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="nav-item dropdown {% if request.resolver_match.url_name == 'company.product' or request.resolver_match.url_name == 'company.product.view' %} active {% endif %}">
+                  <a class="nav-link dropdown-toggle" href="#navbar-base" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/checkbox -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><polyline points="9 11 12 14 20 6" /><path d="M20 12v6a2 2 0 0 1 -2 2h-12a2 2 0 0 1 -2 -2v-12a2 2 0 0 1 2 -2h9" /></svg>
+                    </span>
+                    <span class="nav-link-title">
+                      제품정보
+                    </span>
+                  </a>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-menu-columns">
+                      <div class="dropdown-menu-column">
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'company.product' %} active {% endif %}" href="/company/product/regist/" >
+                          제품 등록
+                        </a>
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'company.product.view' %} active {% endif %}" href="/company/product/search/" >
+                          제품 검색
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="nav-item dropdown {% if request.resolver_match.url_name == 'recommend' or request.resolver_match.url_name == 'recommend.home' %} active {% endif %}">
+                  <a class="nav-link dropdown-toggle" href="#navbar-extra" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/star -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><path d="M12 17.75l-6.172 3.245l1.179 -6.873l-5 -4.867l6.9 -1l3.086 -6.253l3.086 6.253l6.9 1l-5 4.867l1.179 6.873z" /></svg>
+                    </span>
+                    <span class="nav-link-title">
+                      소재추천
+                    </span>
+                  </a>
+                  <div class="dropdown-menu">
+                    <a class="dropdown-item {% if request.resolver_match.url_name == 'recommend.home' %} active {% endif %}" href="/recommend/" >
+                      추천 소재 검색
+                    </a>
+                  </div>
+                </li>
+                <li class="nav-item dropdown {% if user.groups.all.0.name == 'customer' %} none {% endif %} {% if request.resolver_match.url_name == 'company' or request.resolver_match.url_name == 'company.index' or request.resolver_match.url_name == 'company.list' or request.resolver_match.url_name == 'company.facility' %} active {% endif %}">
+                  <a class="nav-link dropdown-toggle" href="#navbar-layout" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/layout-2 -->
+                      <svg xmlns="http://www.w3.org/2000/svg" class="icon" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round"><path stroke="none" d="M0 0h24v24H0z" fill="none"/><rect x="4" y="4" width="6" height="5" rx="2" /><rect x="4" y="13" width="6" height="7" rx="2" /><rect x="14" y="4" width="6" height="7" rx="2" /><rect x="14" y="15" width="6" height="5" rx="2" /></svg>
+                    </span>
+                    <span class="nav-link-title">
+                      회사정보
+                    </span>
+                  </a>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-menu-columns">
+                      <div class="dropdown-menu-column">
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'company.index' %} active {% endif %}" href="/company/" >
+                          설비정보등록
+                        </a>
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'company.list' %} active {% endif %}" href="/company/info/list/" >
+                          설비정보검색
+                        </a>
+                        <a class="dropdown-item  {% if request.resolver_match.url_name == 'company.facility' %} active {% endif %}" href="/company/facility/list/" >
+                          작업현황검색
+                        </a>
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'company.facility' %} active {% endif %}" href="/company/facility/list/" >
+                          업체신뢰도평가
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="nav-item dropdown {% if user.groups.all.0.name == 'customer' %} none {% endif %} {% if request.resolver_match.url_name == 'schedule' or request.resolver_match.url_name == 'schedule.sch_confirmed' or request.resolver_match.url_name == 'schedule.history' or request.resolver_match.url_name == 'schedule.history_chart' or request.resolver_match.url_name == 'schedule.index' %} active {% endif %}">
+                  <a class="nav-link dropdown-toggle" href="#navbar-layout" data-bs-toggle="dropdown" data-bs-auto-close="outside" role="button" aria-expanded="false" >
+                    <span class="nav-link-icon d-md-none d-lg-inline-block"><!-- Download SVG icon from http://tabler-icons.io/i/file-text -->
+                      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-calendar" viewBox="0 0 16 16"> <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/> </svg>
+                    </span>
+                    <span class="nav-link-title">
+                      스케줄링
+                    </span>
+                  </a>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-menu-columns">
+                      <div class="dropdown-menu-column">
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'schedule.sch_confirmed' %} active {% endif %}" href="/schedule/confirmed/" >
+                          확정스케줄조회
+                        </a>
+                        <a class="dropdown-item {% if request.resolver_match.url_name == 'schedule.history' %} active
+								{% elif request.resolver_match.url_name == 'schedule.history_chart' %} active
+								{% endif %}" href="/schedule/history/" >
+                          스케줄링이력
+                        </a>
+                        <a class="dropdown-item {% if user.groups.all.0.name == 'admin' %} none {% endif %}
+                        {% if request.resolver_match.url_name == 'schedule.index' %} mm-active {% endif %}"
+                         href="/schedule/" >
+                          스케줄링실행
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="page-wrapper">
+        <div class="page-body">
+          <div class="container-xl">
+            <!-- 기본 템플릿 안에 삽입될 내용 Start -->
+            {% block content %}
+            {% endblock %}
+            <!-- 기본 템플릿 안에 삽입될 내용 End -->
+          </div>
+        </div>
+        <footer class="footer footer-transparent d-print-none">
+          <div class="container-xl">
+            <div class="row text-center align-items-center flex-row-reverse">
+              <div class="col-12 col-lg-auto mt-3 mt-lg-0">
+                <ul class="list-inline list-inline-dots mb-0">
+                  <li class="list-inline-item">
+                    Copyright &copy; 2022
+                    <a href="." class="link-secondary">부경대학교</a>.
+                    All rights reserved.
+                  </li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </footer>
+      </div>
+    </div>
+    <!-- Libs JS -->
+    <!-- Core plugin JavaScript-->
+	<script src="/static/js/moment/moment.js"></script>
+    <!-- Tabler Core -->
+    <script src="/static/js/tabler.min.js"></script>
+    <script src="/static/js/demo.min.js"></script>
+    <script src="/static/js/index.js"></script>
+    <script src="/static/js/flatpickr/flatpickr.js"></script>
+    <script src="/static/js/flatpickr/flatpickr.ko.js"></script>
+    <script src="/static/js/multiple-select/multiple-select.js"></script>
+    <script src="/static/vendor/fullcalendar/lib/main.js"></script>
+    <script src="/static/vendor/calendar/core/main.js"></script>
+    <script src="/static/vendor/calendar/interaction/main.js"></script>
+    <script src="/static/vendor/calendar/daygrid/main.js"></script>
+    <!-- sweetalert 설치 후 사용가능 $ npm install sweetalert2 -->
+    <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <!-- Page level custom scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/hammer.js/2.0.8/hammer.min.js" integrity="sha512-UXumZrZNiOwnTcZSHLOfcTs0aos2MzBWHXOHOuB0J/R44QB0dwY5JgfbvljXcklVf65Gc4El6RjZ+lnwd2az2g==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-zoom/0.7.7/chartjs-plugin-zoom.js" integrity="sha512-qeclqxc+2KW7GtbmHcj/Ev5eBoYpPnuAcPqusYRIfvaC9OWHlDwu1BrIVPYvfNDG+SRIRiPIokiSvhlLJXDqsw==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/0.5.7/chartjs-plugin-annotation.min.js"></script>
+    </body>
+</html>

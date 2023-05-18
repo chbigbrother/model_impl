@@ -1,0 +1,294 @@
+{% extends "common/header.html" %}
+{% block content %}
+
+<!-- Page Heading -->
+<div class="row">
+    <input class="form-control text-center" type="hidden" name="id" id="id" value="{{ id }}"/>
+    <input class="form-control text-center" type="hidden" name="schDate" id="schDate" value="{{ schDate }}"/>
+    <div class="col-lg-12" >
+        <div class="card">
+            <div class="card-body">
+                <ul class="nav nav-pills mb-4">
+                    <!--<li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#qwe">QWE</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#asd">ASD</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#zxc">ZXC</a>
+                    </li>-->
+                </ul>
+                <div class="tab-content nav-pills-tab">
+                    <!--<div class="tab-pane panel panel-default fade show active" id="qwe">
+                        <div class="panel-body">
+                            <div class="card shadow mb-4">
+                                &lt;!&ndash; Card Header - Dropdown &ndash;&gt;
+                                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                                    <h6 class="m-0 font-weight-bold text-primary">스케줄 이력 차트 </h6>
+                                </div>
+                                &lt;!&ndash; Card Body &ndash;&gt;
+                                <div class="card-body chart-body" >
+                                    <div class="chart-area">
+                                        <canvas id="myAreaChart"></canvas>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade" id="asd">
+                        <p>Nunc vitae turpis id nibh sodales commodo et non augue. Proin fringilla ex nunc. Integer tincidunt risus ut facilisis tristique.</p>
+                    </div>
+                    <div class="tab-pane fade" id="zxc">
+                        <p>Curabitur dignissim quis nunc vitae laoreet. Etiam ut mattis leo, vel fermentum tellus. Sed sagittis rhoncus venenatis. Quisque commodo consectetur faucibus. Aenean eget ultricies justo.</p>
+                    </div>-->
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+<!-- Area Chart -->
+
+<div id="css-loader" class="loader loader-default"></div>
+<script>
+    function dateformat(value){
+        var year = value.substring(0,4);
+        var month = value.substring(4,6);
+        var day = value.substring(6,8);
+        var date = year + '-' + month + '-' + day;
+        return date;
+    }
+    $(function(){
+        var order_id = $('#id').val();
+        var sch_date = $('#schDate').val();
+
+        const today = moment();
+        // 검색 날짜 init
+        flatpickr("#dateFrom, #dateTo", {
+               locale: Flatpickr.l10ns.ko,
+               enableTime: false,
+               dateFormat: "Y-m-d",
+               disableMobile: true,
+               defaultDate: [today.format('YYYY-MM-DD')]
+        });
+        var obj = new Object();
+        obj.orderId = order_id;
+        obj.schDate = sch_date;
+        var ctx = '';
+        var chartname = new Array();
+        var chartset = false;
+        var xmin = 0;
+        var xmax = 0;
+        var ymin = 0;
+        var ymax = 0;
+        var enddate;
+        $.ajax({
+            url: "{% url 'schedule:draw_history_chart' %}",
+            method:'GET',
+            dataType: 'json',
+            contentType: 'application/json',
+            processData: false,
+            data:  JSON.stringify(obj),
+            success: function(result){
+                var x_min = result[0].work_str_date;
+                var innerHTML = '';
+                innerHTML += '';
+                var tabContentHTML = '';
+                for (var i = 0; i < result.length; i++) {
+                    for(var j=0; j<result[i].max_count; j++){
+                        var same = 0;
+                        for (var c=0; c<result[i].chart_draw.length; c++){
+                            if (same==result[i].chart_draw[c].count) continue;
+                            var title = j+1;
+                            if (title == result[i].chart_draw[c].count){
+                                if(title == 1) {
+                                    innerHTML +=        '<li class="nav-item">' +
+                                                            '<a class="nav-link active" data-bs-toggle="tab" href="#navpills2-'+ title +'" aria-expanded="false">' + title + '번째 실행</a>' +
+                                                        '</li>';
+                                    tabContentHTML +=   '<div id="navpills2-' + title + '" class="tab-pane active" >';
+                                } else {
+                                    innerHTML +=        '<li class="nav-item">' +
+                                                            '<a class="nav-link" data-bs-toggle="tab" href="#navpills2-'+ title +'" aria-expanded="false">' + title + '번째 실행</a>' +
+                                                        '</li>';
+                                    tabContentHTML +=   '<div id="navpills2-' + title + '" class="tab-pane">';
+                                }
+                                tabContentHTML += '<div class="panel-body">'+
+                                                        '<div class="card shadow mb-4">'+
+                                                            '<!-- Card Header - Dropdown --> '+
+                                                            '<div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">'+
+                                                                '<h6 class="m-0 font-weight-bold text-primary">스케줄 이력 차트 (' + title + '번째 실행)</h6>'+
+                                                            '</div>'+
+                                                            '<!-- Card Body -->'+
+                                                            '<div class="card-body chart-body" >'+
+                                                                '<div class="chart-area">'+
+                                                                    '<canvas id="myAreaChart_' + title + '" style="height:25vh; width:50vw"></canvas>'+
+                                                                '</div>'+
+                                                            '</div>'+
+                                                        '</div>'+
+                                                  '</div>'+
+                                              '</div>';
+                                same = result[i].chart_draw[c].count;
+                                chartname.push('myAreaChart_' + title);
+                            }
+                        }
+                    }
+                }
+                $('.nav-pills').html(innerHTML);
+                $('.nav-pills-tab').html(tabContentHTML);
+                for (var i = 0; i < result.length; i++) {
+                    for(var j=0; j<result[i].max_count-1; j++){
+                        var dataset = new Array();
+                        for (var c=0; c<result[i].chart_draw.length; c++){
+                            var title = j+1;
+                            if (title == result[i].chart_draw[c].count){
+                                var xmin = new Date(result[i].chart_draw[c].work_str_date);
+                                var x_axis_1 = new Date(xmin.setDate(xmin.getDate() + result[i].chart_draw[c].x_axis_1));
+                                var x_axis_2 = result[i].chart_draw[c].x_axis_2 - result[i].chart_draw[c].x_axis_1;
+                                enddate = new Date(result[i].chart_draw[c].work_end_date);
+                                if (xmax < result[i].chart_draw[c].x_axis_2) {xmax = result[i].chart_draw[c].x_axis_2;}
+                                if (ymax < result[i].chart_draw[c].y_axis_1) {ymax = result[i].chart_draw[c].y_axis_1;}
+                                dataset.push({
+                                    label: result[i].chart_draw[c].prod_name,
+                                    backgroundColor: "rgba(78, 115, 223, 0.05)",
+                                    borderColor: result[i].chart_draw[c].sch_color,
+                                    fill: false,
+                                    responsive: true,
+                                    borderWidth: 15,
+                                    pointRadius: 0,
+                                    data: [{
+                                        x: x_axis_1,
+                                        y: result[i].chart_draw[c].y_axis_1,
+                                    }, {
+                                        x: new Date(xmin.setDate(xmin.getDate() + x_axis_2)),
+                                        y: result[i].chart_draw[c].y_axis_1,
+                                    }]
+                                })
+                            }
+                        }
+                        ctx = document.getElementById(chartname[j]).getContext('2d'); // 추후 설정 다시 해야함 ^^
+                        console.log(ctx);
+                        // chart.js 그리기
+                        var scatterChart = new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                datasets: dataset
+                            },
+                            options: {
+                                // y축 빨간선 표시
+                                annotation: {
+                                    annotations: [{
+                                        drawTime: "afterDatasetsDraw",
+                                        type: "line",
+                                        mode: "vertical",
+                                        scaleID: "x-axis-0",
+                                        value: enddate,
+                                        borderWidth: 1,
+                                        borderColor: "red",
+                                        label: {
+                                            content: "작업완료기한 : " + (enddate.getMonth() + 1) + "월" + enddate.getDate() + "일",
+                                            enabled: true,
+                                            position: "top",
+                                            backgroundColor: "rgba(160,170,174,100)",
+                                        },
+                                    }]
+                                }, // y축 빨간선 표시
+                                animation: {
+                                    onComplete: function() {
+                                        var ctx = this.chart.ctx;
+                                        var cht = this.chart;
+                                        ctx.font = Chart.helpers.fontString(Chart.defaults.global.defaultFontFamily, 'light', Chart.defaults.global.defaultFontFamily);
+                                        ctx.fillStyle = "#4e73df";
+                                        ctx.textAlign = 'center';
+                                        ctx.textBaseline = 'bottom';
+                                        this.data.datasets.forEach(function(dataset, i) {
+                                            var meta = cht.controller.getDatasetMeta(i);
+                                            var data = dataset.label;
+                                            var arr = new Array();
+                                            arr.push(data);
+                                            meta.data.forEach(function(bar, index){
+                                                var label = arr[index];
+                                                if (typeof label == 'undefined') {label = ''}
+                                                ctx.fillText(label, bar._model.x, bar._model.y-5);
+                                            })
+                                        });
+                                    }
+                                },
+                                legend: {
+                                    display: false
+                                },
+                                scales: {
+                                    xAxes: [{
+                                        type: 'time',
+                                        position: 'bottom',
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: '날짜'
+                                        },
+                                        time: {
+                                            unit: 'day',
+                                            unitStepSize: 1,
+                                            displayFormats: {
+                                                'day': 'MM / DD'
+                                            },
+                                            // min: xmin,
+                                            // suggestedMin: 1,
+                                            // maxRotation: 0,
+                                            // stepSize: 1
+                                        },
+                                    }],
+                                    yAxes: [{
+                                        scaleLabel: {
+                                            display: false
+                                        },
+                                        scaleLabel: {
+                                            display: true,
+                                            labelString: '기계 번호'
+                                        },
+                                        ticks: {
+                                            beginAtZero: true,
+                                            stepSize: 1,
+                                            max: ymax + 1
+                                        }
+                                    }]
+                                },
+                                pan: {
+                                    enabled: true,
+                                    mode: 'x',
+                                },
+                                zoom: {
+                                    enabled: true,
+                                    mode: 'x',
+                                },
+                            },
+                        });
+                        // * * ctx 설정 ** *//
+                    }
+                }
+
+            }
+        });
+
+        // ******************************************************************************************************* //
+
+        $('#searchBtn').on('click',function(){
+            doSearch(
+              $('#dateFrom').val().replace(/\-/g,''),
+              $('#dateTo').val().replace(/\-/g,'')
+            );
+        })
+
+        function doSearch(dateFrom, dateTo){
+            $.when(
+               $.ajax({url: "{% url 'schedule:schedule_history' %}"})
+            ).then(function(_data){
+                for(var idx in _data){
+                    console.log(_data);
+                }
+                $('#css-loader').removeClass("is-active");
+            })
+        }
+
+    });
+</script>
+{% endblock %}

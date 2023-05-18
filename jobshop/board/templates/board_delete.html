@@ -1,0 +1,15 @@
+<!--board/templates/board/article_confirm_delete.html-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    <form method="POST">
+        {%csrf_token%}
+        {{object}}를 삭제할까요?
+        <input type="submit" value="삭제">
+    </form>
+</body>
+</html>

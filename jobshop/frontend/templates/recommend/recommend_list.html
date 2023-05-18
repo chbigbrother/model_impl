@@ -1,0 +1,93 @@
+{% extends "common/header.html" %}
+{% block content %}
+
+<!-- Page Heading -->
+<div class="row">
+    {% for comp in recommends %}
+    <div class="col-xl-2 col-lg-6 col-sm-6">
+        <div class="card">
+            <div class="card-body">
+                <div class="new-arrival-product">
+                    <div class="new-arrivals-img-contnent">
+                        <img class="img-fluid" src="/media/{{comp.image}}" alt="">
+                    </div>
+                    <div class="new-arrival-content text-center mt-3">
+                        <h4> <img src="https://img.icons8.com/external-flat-icons-pack-pongsakorn-tan/64/000000/external-company-labor-day-flat-icons-pack-pongsakorn-tan.png"
+                        style="width:13%; margin-right:0.3rem;"/> {{comp.comp_name}}</h4>
+                        <span class="price"> <h4>제품명 :</h4> {{comp.prod_name}}</span>
+                        <h4>{{comp.cost}} 원</h4>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {% endfor %}
+</div>
+
+<!--게시판 관련 js-->
+<!-- Page level plugins -->
+<script src="/static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Page level custom scripts -->
+<script src="/static/js/demo/datatables-demo.js"></script>
+<!-- sweetalert 설치 후 사용가능
+     $ npm install sweetalert2 -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--게시판 관련 js-->
+<script>
+$(function(){
+    const today = moment();
+    // 검색 날짜 init
+    flatpickr("#dateTo", {
+           locale: Flatpickr.l10ns.ko,
+           enableTime: false,
+           dateFormat: "Y-m-d",
+           disableMobile: true,
+           defaultDate: $('#dateTo').val()
+           // defaultDate: [today.format('YYYY-MM-DD')]
+    });
+    flatpickr("#dateFrom", {
+           locale: Flatpickr.l10ns.ko,
+           enableTime: false,
+           dateFormat: "Y-m-d",
+           disableMobile: true,
+           defaultDate: $('#dateFrom').val()
+    });
+    // 수정
+    $('.editContBtn').on('click', function(){
+        $('#editModal').modal("show");
+    });
+    // 삭제
+    var selectdata = new Object;
+    $('.deleteBtn').on('click', function(e){
+        var str = e.currentTarget.id.split('_');
+        selectdata.id = str[1];
+        selectdata.type = 'product';
+        Swal.fire({
+          icon: 'error',
+          title: '삭제하시겠습니까?',
+          showCancelButton: true,
+          text: ''
+        }).then(function(){
+            $.ajax({
+                url: "{% url 'company:delete' %}",
+                data : JSON.stringify(selectdata),
+                type:'json',
+                contentType: 'application/json',
+                method: "POST",
+                success: function(data){
+                    location.reload();
+                },
+                error: function(error){
+                    console.log(error)
+                }
+            });
+        });
+        return false;
+    });
+
+});
+</script>
+{% endblock %}

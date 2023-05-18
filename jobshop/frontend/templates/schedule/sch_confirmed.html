@@ -1,0 +1,165 @@
+{% extends "common/header.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-xl-7 col-lg-5">
+        <div class="card shadow mb-4">
+            <div id='calendar'></div>
+        </div>
+    </div>
+    <div class="col-lg-5">
+        <!-- Circle Buttons -->
+        <div class="card shadow mb-4">
+            <div
+                class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">금일 작업 리스트</h6>
+
+            </div>
+            <div class="card-body" id="order_list">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th scope="col">번호</th>
+                            <th scope="col">스케쥴실행일자</th>
+                            <th scope="col">작업기한요청일</th>
+                            <th scope="col">오더일자</th>
+                            <th scope="col">오더번호</th>
+                        </tr>
+                    </thead>
+                    <tbody class="order_body">
+                        {% for order in order_list %}
+                        <tr>
+                            <td>{{forloop.counter}}</td>
+                            <td>{{order.work_str_date}}</td>
+                            <td>{{order.work_end_date}}</td>
+                            <td>{{order.sch_date}}</td>
+                            <td>{{order.order_id}}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <!-- 처리 가능 리스트 히스토리 -->
+
+    </div>
+</div>
+
+<!-- **************************  modal start  ************************** -->
+<div class="modal fade" id="activationSettingModal"tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">JSS Setting</h4>
+                    <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            <div class="modal-body">
+                <div class="row pknu-modal-row" >
+                    <div class="col-md-3"><label for="schExeDate" class="pt-2">스케쥴일자</label></div>
+                    <div class="col-md-6">
+                         <input type="text" class="form-control" id="schExeDate" aria-describedby="emailHelp" placeholder="" value="" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3"><label for="workStartDate" class="pt-2">작업시작일</label></div>
+                    <div class="col-md-6">
+                         <input type="text" class="form-control" id="workStartDate" aria-describedby="emailHelp" placeholder="" value="" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3"><label for="workEndDate" class="pt-2">작업기한</label></div>
+                    <div class="col-md-6">
+                         <input type="text" class="form-control" id="workEndDate" aria-describedby="emailHelp" placeholder="" value="" readonly="readonly" />
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3"><label for="orderId" class="pt-2" style="font-size:0.95rem;">오더번호</label></div>
+                    <div class="col-lg-6" >
+                         <input class="form-control text-center" type="text" name="dateFrom" id="orderId" readonly="readonly"/>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="htfooter">
+                <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" data-bs-dismiss="modal">
+                    <i class="far fa-window-close fa-sm text-white-50"></i> 취소
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- **************************  modal end  ************************** -->
+
+<script>
+function dateformat(value){
+    var year = value.substring(0,4);
+    var month = value.substring(4,6);
+    var day = value.substring(6,8);
+    var date = year + '-' + month + '-' + day;
+    return date;
+}
+$(function(){
+    const today = moment();
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        plugins: [ 'interaction', 'dayGrid' ],
+        defaultDate: today.format('YYYY-MM-DD'),
+        editable: true,
+        locale: 'ko',
+        eventLimit: true, // allow "more" link when too many events
+        eventSources: [{
+            events: function(start, callback){
+                var obj = new Object;
+                var str_year = start.start.getFullYear();
+                var str_month = start.start.getMonth()+1;
+                var end_year = start.end.getFullYear();
+                var end_month = start.end.getMonth()+1;
+                obj.str_year = str_year;
+                obj.str_month = str_month;
+                obj.end_year = end_year;
+                obj.end_month = end_month;
+                $.ajax({
+                    url: "{% url 'schedule:schedule.monthly_confirmed_order' %}",
+                    method:'GET',
+                    dataType: 'json',
+                    contentType: 'application/json',
+                    data : JSON.stringify(obj),
+                    processData: false,
+                    success: function(result){
+                        console.log(result);
+                        var events = [];
+                        for(var i=0; i<result.length; i++){
+                            events.push({
+                                id: result[i].sch_id,
+                                title: result[i].order_id,
+                                start: dateformat(result[i].work_str_date),
+                                end: dateformat(result[i].work_end_date),
+                            })
+                        }
+                        return callback(events);
+                    }
+                });
+            }
+        }],
+      eventClick: function(info) {
+        var data = info.event.title
+        $.ajax({
+            url:'',
+            method:'GET',
+            success: function(result){
+                $('#activationSettingModal').modal('show');
+                $('.modal-title').text(info.event.title);
+            },
+        });
+      }
+    });
+    calendar.render();
+
+
+});
+
+</script>
+
+
+
+{% endblock %}

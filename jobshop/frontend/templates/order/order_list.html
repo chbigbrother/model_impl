@@ -1,0 +1,495 @@
+{% extends "common/header.html" %}
+{% block content %}
+
+<!-- DataTales Example -->
+<div class="row">
+    <div class="col-lg-12">
+        <div class="panel panel-default">
+            <div class="panel-body">
+                <input type="hidden" id="group_id" value="{{ user.groups.all.0.id }}">
+                <input type="hidden" id="group_name" value="{{ user.groups.all.0.name }}">
+                <input type="hidden" id="user_name" value="{{ user.username }}">
+                <input type="hidden" id="user_id" value="{{ user.id }}">
+                <form method="get" action="{% url 'order:order.order_list_view' %}">
+                    <div class="pknu-table-responsive">
+                        <div class="col-lg-12 col-md-4 pknu-searchDate-card">
+                            <div class="col-lg-1 col-md-3 pknu-searchDate-dd">
+                                <label>주문 일자</label>
+                            </div>
+                            <div class="col-lg-2 col-md-4 pknu-searchDate-dd" >
+                                 <input class="form-control text-center" type="text" name="dateFrom" id="dateFrom" value="{{ dateFrom }}"/>
+                            </div>
+                            <div class="col-lg-1 col-md-1 pknu-searchDate-dd">~</div>
+                            <div class="col-lg-2 col-md-4 pknu-searchDate-dd" style="margin-right:0.4rem;">
+                                <input class="form-control text-center" type="text" name="dateTo" id="dateTo" value="{{ dateTo }}"/>
+                            </div>
+                            <div class="col-pos-right">
+                                <button id="searchBtn" href="#" class="btn btn-dark w-100">검색</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="col-12">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Lists</h4>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="example" class="display" style="min-width: 100%;">
+                        <thead>
+                    <tr>
+                        <th style="width:10%;">번호</th>
+                        <th style="width:10%;">고객명</th>
+                        <th style="width:10%;">제품명</th>
+                        <th style="width:10%;">요구량(yd)</th>
+                        <th style="width:10%;">요청기한</th>
+                        <th style="width:10%;">주문일자</th>
+                        <th style="width:10%;">연락처(Phone)</th>
+                        <th style="width:10%;">이메일</th>
+                        <th style="width:10%;">주문현황</th>
+                        <th style="display:none;">order_id</th>
+                        <th style="text-align:center;width:9%;">관리</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in order_list %}
+                    <tr>
+                        <td class="idx">{{forloop.counter}}</td>
+                        <td class="cust_name">{{order.cust_name}}</td>
+                        <td class="prod_name">{{order.prod_id}}</td>
+                        <td class="amount">{{order.amount}}</td>
+                        <td class="exp_date">{{order.exp_date}}</td>
+                        <td class="sch_date">{{order.sch_date}}</td>
+                        <td class="contact">{{order.contact}}</td>
+                        <td class="email">{{order.email}}</td>
+                        <td class="order_id" style="display:none;">{{order.order_id}}</td>
+                        <td class="ord_status">
+                            {% if order.ord_status == 1 %}
+                                <span class="badge badge-success badge-lg light"> 업체생산중 </span>
+                            {% elif order.ord_status == 0 %}
+                                <a href="#" class="compSelectRq">
+                                    <span class="badge badge-danger badge-lg light">업체선택요청
+
+                                    </span>
+                                </a>
+                            <!-- {% if user.groups.all.0.name == 'customer' or user.groups.all.0.name == 'admin' %}
+                                <a href="#" class="compSelectRq">
+                                    <span class="badge badge-danger badge-lg light">업체선택요청
+
+                                    </span>
+                                </a>
+                                {% else %}
+                                <span class="badge badge-danger badge-lg light">업체매칭대기
+
+                                </span>
+                                {% endif %} -->
+                            {% elif order.ord_status == 2 %}
+<!--                                <span class="badge badge-warning badge-lg light">새로운주문</span>-->
+                                <a href="#" class="compSelectRq">
+                                    <span class="badge badge-danger badge-lg light">업체선택요청
+
+                                    </span>
+                                </a>
+                            {% endif %}
+                        </td>
+                        <td style="text-align:center;">
+                            <div class="action-buttons">
+                                {% if user.groups.all.0.name == 'customer' and order.ord_status == 1 %}
+                                <!--<a href="#" class="btn btn-warning light mr-2" id="edit_{{ order.prod_id.prod_name }}">-->
+                                <a href="#" class="btn btn-warning light mr-2 rateComp" id="edit_{{ order.prod_id.prod_name }}">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"></rect>
+                                            <path d="M12 .288l2.833 8.718h9.167l-7.417 5.389 2.833 8.718-7.416-5.388-7.417 5.388 2.833-8.718-7.416-5.389h9.167z" fill="#000000" fill-rule="nonzero"/>
+                                            <rect fill="#000000" opacity="0.3" x="5" y="20" width="15" height="2" rx="1"></rect>
+                                        </g>
+                                    </svg>
+                                </a>
+                                {% elif user.groups.all.0.name != 'customer' and order.ord_status == 1 %}
+                                <a href="#" class="btn btn-success light mr-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"></rect>
+                                            <path d="M20.285 2l-11.285 11.567-5.286-5.011-3.714 3.716 9 8.728 15-15.285z" fill="#000000" fill-rule="nonzero"/>
+                                            <rect fill="#000000" opacity="0.3" x="5" y="20" width="15" height="2" rx="1"></rect>
+                                        </g>
+                                    </svg>
+                                </a>
+                                {% else %}
+                                <a href="#" class="btn btn-secondary light mr-2 editContBtn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="18px" height="18px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"></rect>
+                                            <path d="M8,17.9148182 L8,5.96685884 C8,5.56391781 8.16211443,5.17792052 8.44982609,4.89581508 L10.965708,2.42895648 C11.5426798,1.86322723 12.4640974,1.85620921 13.0496196,2.41308426 L15.5337377,4.77566479 C15.8314604,5.0588212 16,5.45170806 16,5.86258077 L16,17.9148182 C16,18.7432453 15.3284271,19.4148182 14.5,19.4148182 L9.5,19.4148182 C8.67157288,19.4148182 8,18.7432453 8,17.9148182 Z" fill="#000000" fill-rule="nonzero" transform="translate(12.000000, 10.707409) rotate(-135.000000) translate(-12.000000, -10.707409) "></path>
+                                            <rect fill="#000000" opacity="0.3" x="5" y="20" width="15" height="2" rx="1"></rect>
+                                        </g>
+                                    </svg>
+                                </a>
+                                {% endif %}
+                                <a href="#" class="btn btn-danger light deleteBtn">
+                                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
+                                        <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                            <rect x="0" y="0" width="24" height="24"></rect>
+                                            <path d="M6,8 L6,20.5 C6,21.3284271 6.67157288,22 7.5,22 L16.5,22 C17.3284271,22 18,21.3284271 18,20.5 L18,8 L6,8 Z" fill="#000000" fill-rule="nonzero"></path>
+                                            <path d="M14,4.5 L14,4 C14,3.44771525 13.5522847,3 13,3 L11,3 C10.4477153,3 10,3.44771525 10,4 L10,4.5 L5.5,4.5 C5.22385763,4.5 5,4.72385763 5,5 L5,5.5 C5,5.77614237 5.22385763,6 5.5,6 L18.5,6 C18.7761424,6 19,5.77614237 19,5.5 L19,5 C19,4.72385763 18.7761424,4.5 18.5,4.5 L14,4.5 Z" fill="#000000" opacity="0.3"></path>
+                                        </g>
+                                    </svg>
+                                </a>
+                            </div>
+                            <!--<a href="#" id="edit_{{ order.prod_id.prod_name }}"><i class="far fa-edit {{ order.prod_id.prod_name }}"></i></a>
+                            <a href="#" id="delete_{{ order.prod_id.prod_name }}" style="margin-left:10px; z-index:1000;"><i class="fas fa-trash-alt"></i></a>-->
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<!-- ***************************************************************** 관리 Modal ***************************************************************** -->
+<div class="modal modal-blur fade" id="editModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">주문 관리</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+            <div class="modal-body">
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3 pknu-modal-label"><label for="divCustName" class="form-label">고객명</label></div>
+                    <div class="col-md-7" id="divCustName">
+                        <input class="form-control text-center" type="text" name="dateFrom" id="custName" />
+                    </div>
+                </div>
+
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3 pknu-modal-label"><label class="pt-2">제품명</label></div>
+                    <div class="col-md-7" id="divProdName">
+                        <!-- <select class="form-control" name="select" multiple="multiple" id="prodName">
+
+                        </select> -->
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3 pknu-modal-label"><label for="ordAmount" class="pt-2" style="font-size:0.95rem;">요구량(yd)</label></div>
+                    <div class="col-lg-7" >
+                         <input class="form-control text-center" type="text" name="dateFrom" id="ordAmount" />
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3 pknu-modal-label"><label for="expDate" class="pt-2" style="font-size:0.95rem;">요청기한</label></div>
+                    <div class="col-lg-7" >
+                         <input class="form-control text-center" type="text" name="dateFrom" id="expDate" />
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3 pknu-modal-label"><label for="contact" class="pt-2" style="font-size:0.95rem;">연락처</label></div>
+                    <div class="col-lg-7" >
+                         <input class="form-control text-center" type="text" name="dateFrom" id="contact" />
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3 pknu-modal-label"><label for="email" class="pt-2" style="font-size:0.95rem;">이메일</label></div>
+                    <div class="col-lg-7" >
+                         <input class="form-control text-center" type="text" name="dateFrom" id="email" />
+                    </div>
+                </div>
+                <input class="form-control text-center" type="hidden" name="order_id" id="order_id" />
+            </div>
+            <div class="modal-footer" id="htfooter">
+                <button type="button" class="btn btn-link link-secondary" data-bs-dismiss="modal">
+                    <i class="far fa-window-close fa-sm text-white-50"></i> 취소
+                </button>
+                <a href="#" id="editBtn" class="btn btn-primary ms-auto">
+                    <i class="far fa-paper-plane fa-sm text-white-50"></i>&nbsp; 수정
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 관리 Modal END -->
+<!-- ***************************************************************** 평가 Modal ***************************************************************** -->
+<div class="modal fade" id="rateModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <h4 class="modal-title" id="rateModalLabel">업체 평가</h4>
+                    <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            <div class="modal-body">
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3" style="margin-right:5rem;"><label for="service" class="pt-2">서비스 만족도</label></div>
+                    <div class="col-md-6" id="service">
+                        <div class="star-rating">
+                          <input type="radio" id="5-stars" name="rating" value="5" />
+                          <label for="5-stars" class="star">&#9733;</label>
+                          <input type="radio" id="4-stars" name="rating" value="4" />
+                          <label for="4-stars" class="star">&#9733;</label>
+                          <input type="radio" id="3-stars" name="rating" value="3" />
+                          <label for="3-stars" class="star">&#9733;</label>
+                          <input type="radio" id="2-stars" name="rating" value="2" />
+                          <label for="2-stars" class="star">&#9733;</label>
+                          <input type="radio" id="1-star" name="rating" value="1" />
+                          <label for="1-star" class="star">&#9733;</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="ratefooter">
+                <a href="#" id="submitBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="far fa-paper-plane fa-sm text-white-50"></i> 제출
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 평가 Modal END -->
+<!-- ***************************************************************** 기업 선택 Modal ***************************************************************** -->
+<div class="modal fade" id="compSelectRqModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="compSelectModalLabel">생산 업체 선택</h4>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="card-body">
+                    <div class="widget-media">
+                        <ul class="timeline">
+
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="compSelectFooter">
+                <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" data-bs-dismiss="modal">
+                    <i class="far fa-window-close fa-sm text-white-50"></i> 취소
+                </button>
+                <a href="#" id="compSelectSubmitBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="far fa-paper-plane fa-sm text-white-50"></i> 제출
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 기업 선택 Modal END -->
+
+<!--게시판 관련 js-->
+<!-- Page level plugins -->
+<script src="/static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/static/js/dropzone/dropzone.min.js"></script>
+<!-- Page level custom scripts -->
+<script src="/static/js/demo/datatables-demo.js"></script>
+
+<script>
+    function dateformat(value){
+        var year = value.substring(0,4);
+        var month = value.substring(4,6);
+        var day = value.substring(6,8);
+        var date = year + '-' + month + '-' + day;
+        return date;
+    }
+
+    $(function(){
+        const today = moment();
+        // 검색 날짜 init
+        flatpickr("#dateTo", {
+               locale: Flatpickr.l10ns.ko,
+               enableTime: false,
+               dateFormat: "Y-m-d",
+               disableMobile: true,
+               defaultDate: $('#dateTo').val()
+               // defaultDate: [today.format('YYYY-MM-DD')]
+        });
+        flatpickr("#dateFrom", {
+               locale: Flatpickr.l10ns.ko,
+               enableTime: false,
+               dateFormat: "Y-m-d",
+               disableMobile: true,
+               defaultDate: $('#dateFrom').val()
+        });
+
+        $('.rateComp').on('click', function(){
+            $('#rateModal').modal('show');
+            $('#submitBtn').on('click', function(){
+                $(':input:radio[name=rating]:checked').val();
+            });
+        });
+
+        $('.editContBtn').on('click', function(){
+            $('#editModal').modal('show');
+            /* Modal 내부 input 내용 */
+            var cust_name = $(this).parents().siblings('.cust_name')[0].innerText;
+            var prod_name = $(this).parents().siblings('.prod_name')[0].innerText;
+            var amount = $(this).parents().siblings('.amount')[0].innerText;
+            var exp_date = $(this).parents().siblings('.exp_date')[0].innerText;
+            var contact = $(this).parents().siblings('.contact')[0].innerText;
+            var email = $(this).parents().siblings('.email')[0].innerText;
+            var order_id = $(this).parents().siblings('.order_id')[0].innerText;
+            flatpickr("#expDate", {
+                   locale: Flatpickr.l10ns.ko,
+                   enableTime: false,
+                   dateFormat: "Y-m-d",
+                   disableMobile: true,
+                   defaultDate: exp_date
+                   // defaultDate: [today.format('YYYY-MM-DD')]
+            });
+            $('#divProdName').html('');
+            $.ajax({
+                url: "{% url 'company:company.comp_facility_all' %}",
+                method:'GET',
+                contentType: false,
+                processData: false,
+                success: function(result){
+                    var innerHTML = '<select class="form-control" name="select" id="prodName">';
+                    if(result.length>1){
+                        for(var i=0; i<result.length; i++){
+                            if(prod_name==result[i].prod_name){
+                                innerHTML += '<option value="' + result[i].prod_name + '" selected>' + result[i].prod_name + '</option>';
+                            }
+                            else if(typeof result[i] !== 'undefined'){
+                                innerHTML += '<option value="' + result[i].prod_name + '">' + result[i].prod_name + '</option>';
+                            }
+                        }
+                    }else {
+                        var innerHTML = '<input type="text" class="form-control" placeholder="등록된 제품명이 없습니다." value="" readonly="readonly" />';
+                    }
+                    $('#divProdName').html(innerHTML);
+                }
+            })
+            $('#custName').val(cust_name);
+            $('#prodName').val(prod_name);
+            $('#ordAmount').val(amount);
+            $('#contact').val(contact);
+            $('#email').val(email);
+            $('#order_id').val(order_id);
+
+            /* Modal 내부 input 내용 */
+
+            /* edit */
+            $('#editBtn').on('click', function(){
+                var obj = new Object();
+                obj.cust_name = $('#custName').val();
+                obj.prod_name = $('#prodName').val();
+                obj.amount = $('#ordAmount').val();
+                obj.exp_date = $('#expDate').val();
+                obj.contact = $('#contact').val();
+                obj.email = $('#email').val();
+                obj.order_id = $('#order_id').val();
+                var url = "{% url 'order:order.order_list_edit'%}";
+                $.ajax({
+                    url: url,
+                    method:'POST',
+                    contentType: false,
+                    processData: false,
+                    dataType :   "json",
+                    contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
+                    data: JSON.stringify(obj),
+                    success: function(result){
+                        location.reload();
+                    }
+                });
+            });
+            /* edit */
+        });
+        /* delete */
+        $('.deleteBtn').on('click', function(){
+            var order_id = $(this).parents().siblings('.order_id')[0].innerText;
+            var obj = new Object();
+            obj.order_id = order_id;
+            Swal.fire({
+              icon: 'error',
+              title: '삭제하시겠습니까?',
+              showCancelButton: true,
+              text: ''
+            }).then(function(data){
+                if(data.isConfirmed){
+                    $.ajax({
+                        url: "{% url 'order:order.order_list_delete' %}",
+                        data : JSON.stringify(obj),
+                        type:'json',
+                        contentType: 'application/json',
+                        method: "POST",
+                        success: function(data){
+                            location.reload();
+                        }
+                    });
+                }
+            });
+        });
+        /* delete */
+        /* 생산 업체 선택 모달 select */
+        $('.compSelectRq').on('click', function(){
+            $('#compSelectRqModal').modal('show');
+            var order_id = $(this).parents().siblings('.order_id')[0].innerText;
+            var date_from = $('#dateFrom').val();
+            var date_to = $('#dateTo').val();
+            var obj = new Object();
+            obj.order_id = order_id;
+            obj.date_from = date_from;
+            obj.date_to = date_to;
+            $.ajax({
+                url: "{% url 'order:avail_comps' %}",
+                data : JSON.stringify(obj),
+                type:'json',
+                contentType: 'application/json',
+                method: "GET",
+                success: function(data){
+                    // console.log(data.length);                    }
+                    innerHTML = '<h3 class="form-check custom-checkbox checkbox-success check-lg" style="margin-bottom:10px;">' + data[0].prod_name + '</h3>';
+                    for (var i=0; i<data.length; i++){
+                        // exp_date   comp_name   cost  credibility
+                        innerHTML +=    '<li class="nav-item">' +
+                                            '<div class="timeline-panel">' +
+                                                '<div class="form-check custom-checkbox checkbox-success check-lg me-3">' +
+                                                    '<input type="radio" class="form-check-input" name="compCheck" id="' + data[i].order_id + '" value="' + data[i].comp_name + '" required="">' +
+                                                '</div>' +
+                                                '<div class="media-body listline-wrapper">' +
+                                                    '<span class="mb-0 item">' + data[i].comp_name + '</span>' +
+                                                    '<span class="mb-0 item">  신뢰도 : ' + data[i].credibility + ' / 5.0 </span>' +
+                                                    '<span class="mb-0 item">&nbsp; 가격 : ' + data[i].cost + ' 원</span>' +
+                                                    '<span class="mb-0 item">&nbsp; 작업 완료 예상: 2022/05/05 </span>' +
+                                                '</div>' +
+                                            '</div>' +
+                                        '</li>';
+                    }
+                    console.log(innerHTML);
+                    $('.timeline').html(innerHTML);
+                }
+            });
+        });
+
+        /* 생산 업체 선택 submit */
+        $('#compSelectSubmitBtn').on('click', function(e){
+            var result = $("input[name='compCheck']:checked").val();
+            var order_id = $("input[name='compCheck']:checked").attr('id');
+            if (typeof result != 'undefined'){
+                var obj = new Object();
+                obj.type = 'customer';
+                obj.comp_name = result;
+                obj.order_id = order_id;
+                $.ajax({
+                    url: "{% url 'schedule:fixed_order' %}",
+                    data : JSON.stringify(obj),
+                    type:'json',
+                    contentType: 'application/json',
+                    method: "POST",
+                    success: function(data){
+                        console.log('done');
+                        location.reload();
+                    },
+                });
+
+            }
+        });
+    });
+
+</script>
+{% endblock %}

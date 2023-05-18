@@ -1,0 +1,55 @@
+<!--board/templates/board/article_list.html-->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+    {% if object_list %}
+    <ul>
+        {% for each in object_list  %}
+        <li>
+            {{each.id}} [{{each.author}}]
+            <a href="{% url 'detail' each.id%}">{{ each.title }}</a>
+            [{{each.created_at|date:'Y-m-d, H:i'}}]
+        </li>
+        {% endfor %}
+    </ul>
+    {% else %}
+    <p>목록이 비었습니다.</p>
+    {% endif %}
+
+    {% if is_paginated %}
+    <ul>
+        {% if page_obj.has_previous %}
+        <li><a href="?page={{ page_obj.previous_page_number }}">&laquo;</a></li>
+        {% else %}
+        <li><span>&laquo;</span></li>
+        {% endif %}
+
+        {% for i in paginator.page_range %}
+            {% if page_obj.number == i %}
+        <li><span>{{ i }} <span>(current)</span></span></li>
+            {% else %}
+        <li><a href="?page={{ i }}">{{ i }}</a></li>
+            {% endif %}
+        {% endfor %}
+        {% if page_obj.has_next %}
+        <li><a href="?page={{ page_obj.next_page_number }}">&raquo;</a></li>
+        {% else %}
+        <li><span>&raquo;</span></li>
+        {% endif %}
+    </ul>
+    {% endif %}
+    <div><a href="{% url 'create' %}">글 등록</a></div>
+    {% if user.is_authenticated %}
+    <div><p>Hi {{ user.username }}!</p></div>
+    <div><a href="{% url 'logout' %}">Log Out</a></div>
+    <div><a href="{% url 'password_change' %}">Password Change</a></div>
+    {% else %}
+    <div><p>You are not logged in</p></div>
+    <div><a href="{% url 'login' %}">Log In</a> or <a href="{% url 'signup' %}">Sign Up</a></div>
+    {% endif %}
+</body>
+</html>

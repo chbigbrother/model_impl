@@ -1,0 +1,264 @@
+{% extends "common/header.html" %}
+{% block content %}
+<style>
+    .dataTables_wrapper .dataTables_filter {display:none;}
+    .pagination {display:none;}
+    .dataTables_info {display:none;}
+    input {border:none; width:100%; color:#858796;}
+</style>
+<div class="col-md-12 col-lg-12">
+    <div class="card">
+        <div class="card-header" style="margin-left:85%;">
+            <a href="#" class="btn btn-info btn-icon-split modal-upload-btn">
+                <span class="icon text-white-50">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span class="text">제품개별업로드</span>
+            </a>
+        </div>
+        <div class="card-table table-responsive">
+            <form id="orderForm" method="POST" action="{% url 'company:company.comp_prod_update_csv' %}">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>번호</th>
+                            <th>제품명</th>
+                            <th>밀도</th>
+                            <th>평균 rpm</th>
+                            <th>일일생산량</th>
+                            <th style="text-align:center;">관리</th>
+                        </tr>
+                    </thead>
+                    <tbody class="tbody-data">
+
+                    </tbody>
+                </table>
+                <div class="dropdown dropdown-btn no-arrow" style="text-align:right;">
+                    <button type="submit" value="OrderList" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                        <i class="fas fa-upload fa-sm text-white-50"></i> 제품 업로드
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<!-- OrderUploadModal -->
+<div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="uploadModal" aria-hidden="true" data-backdrop="static">
+    <form method="POST" action="{% url 'company:company.comp_prod_update_modal' %}" enctype="multipart/form-data">
+        <div class="modal-dialog modal-dialog2" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">제품 등록</h4>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row pknu-modal-row">
+                        <div class="col-md-3"><label class="pt-2" style="font-size:0.95rem;">제품명</label></div>
+                        <div class="col-lg-6">
+                            <input class="form-control text-center" type="text" name="prod_name" id="prodname" />
+                        </div>
+                    </div>
+                    <div class="row pknu-modal-row">
+                        <div class="col-md-3"><label for="density" class="pt-2">밀도</label></div>
+                        <div class="col-lg-6">
+                            <input class="form-control text-center" type="text" name="density" id="density" />
+                        </div>
+                    </div>
+                    <div class="row pknu-modal-row">
+                        <div class="col-md-3"><label class="pt-2">평균 rpm</label></div>
+                        <div class="col-lg-6">
+                            <input class="form-control text-center" type="text" name="avg_rpm" id="avgrpm" />
+                        </div>
+                    </div>
+                    <div class="row pknu-modal-row">
+                        <div class="col-md-3"><label class="pt-2">일일생산량</label></div>
+                        <div class="col-lg-6">
+                            <input class="form-control text-center" type="text" name="prod_rate" id="prodrate" />
+                        </div>
+                    </div>
+                    <div class="row pknu-modal-row">
+                        <div class="col-md-3"><label class="pt-2">yd당 평균 단가</label></div>
+                        <div class="col-lg-6">
+                            <input class="form-control text-center" type="text" name="cost" id="cost" />
+                        </div>
+                    </div>
+                    <div class="row pknu-modal-row">
+                        <div class="col-md-3"><label class="pt-2">소재추천 등록</label></div>
+                        <div class="col-lg-6">
+                            <select name="recommend_yn" class="form-control form-white">
+                                <option value="Y" selected="selected">등록</option>
+                                <option value="N">미등록</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row pknu-modal-row">
+                        <div class="col-md-3"><label class="pt-2">제품 이미지</label></div>
+                        <div class="col-lg-6">
+                            <input class="form-control text-center" type="file" name="image" id="image" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer" id="modal-footer">
+                    <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" data-bs-dismiss="modal">
+                        <i class="far fa-window-close fa-sm text-white-50"></i> 취소
+                    </button>
+                    <button type="submit" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="modal-upload">
+                        <i class="fas fa-upload fa-sm text-white-50"></i> 제품업로드
+                    </button>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+<!-- OrderUploadModal -->
+
+
+<!--게시판 관련 js-->
+<!-- Page level plugins -->
+<script src="/static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+<!-- Page level custom scripts -->
+<script src="/static/js/demo/datatables-demo.js"></script>
+
+<script>
+
+    function hasExtension(fileName, exts) {
+        return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
+    }
+    var fileName = "";
+    $(function(){
+        $(".dropdown-btn").css('display', 'none');
+
+        // 제품 정보 업로드 버튼
+        $('.modal-upload-btn').on('click', function(){
+            $('#uploadModal').modal({backdrop: 'static', keyboard: false})
+            $("#uploadModal").modal("show");
+        });
+        // .csv 업로드 버튼
+        $('.upload-btn').on('click', function(){
+            $('#excelUploadModal').modal({backdrop: 'static', keyboard: false})
+            $("#excelUploadModal").modal("show");
+        });
+
+        // 제품 정보 업로드 제품정보업로드 버튼 클릭 이벤트
+        /* $("#modal-upload").on("click", function(){
+            var obj = new Object();
+            var formData = new FormData();
+            obj.prod_name = $('#prodname').val();
+            obj.density = $('#density').val();
+            obj.avg_rpm = $('#avgrpm').val();
+            obj.prod_rate = $('#prodrate').val();
+            obj.cost = $('#cost').val();
+            obj.image = $('#image').val();
+            formData.append("image", $('#image')[0].files[0]);
+            var json_fin = {
+                'contents': obj,
+                'image_file': formData
+            };
+            $.ajax({
+                url: "{% url 'company:company.comp_prod_update_modal' %}",
+                data : {
+                            'contents': JSON.stringify(json_fin)
+                       },
+                type:'json',
+                contentType: 'application/json',
+                method: "POST",
+                success: function(data){
+                    $(location).attr('href', "{% url 'company:company.product.view' %}")
+                }
+            });
+
+        }); */
+        $("#fileReadBtn").on("click", function(e){
+            $.ajax({
+                url: _url,
+                method:'POST',
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function(result){
+                    $(".dropdown-btn").css('display', 'block');
+                    $(".upload-btn").css('display', 'none');
+                    var innerHTML;
+                    var count = 0;
+                    for(var i=0; i<result.length; i++){
+                        count = count + 1;
+                        innerHTML += '<tr>' +
+                            '<td>' + count + '</td>' +
+                            '<td><input name="prod_name" value="' + result[i].prod_name + '"/></td>' +
+                            '<td><input name="density" value="' + result[i].density + '"/></td>' +
+                            '<td><input name="rpm" value="' + result[i].rpm + '"/></td>' +
+                            '<td><input name="daily_prod_rate" value="' + result[i].daily_prod_rate + '"/></td>' +
+                            '<td style="text-align:center;">' +
+                                '<a href="#" id="delete_'+ count +'" onclick="deletedOrder(\'' + result[i].prod_name + '\',\'' + result[i].density + '\')"><i class="fas fa-trash-alt"></i></a>' +
+                            '</td>' +
+                        '</tr>';
+                    }
+                    $('.tbody-data').html(innerHTML);
+                    if(result.message == 'error'){
+                        Swal.fire({
+                          icon: 'error',
+                          title: '파일 형식 오류',
+                          text: '데이터 항목을 형식에 맞춘 후 업로드 해 주세요.',
+                          footer: '<a href="">형식 다운로드</a>'
+                        });
+                        return false;
+                    } else {
+                        $('#excelUploadModal').modal('hide');
+                    }
+                },
+                error: function(error){
+                    console.log(error);
+                    // $('#css-loader').removeClass("is-active");
+                }
+            });
+        });
+        $('#form').attr('action',"{% url 'order:order.csvCreate' %}").submit();
+    });
+    function deletedOrder(name, amount){
+        var selectdata = new Object();
+        selectdata.name = name;
+        selectdata.amount = amount;
+        selectdata.fileName = fileName;
+        Swal.fire({
+          icon: 'error',
+          title: '삭제하시겠습니까?',
+          showCancelButton: true,
+          text: ''
+        }).then(function(){
+            $.ajax({
+                url: "{% url 'order:order.order_delete_read_csv' %}",
+                data : JSON.stringify(selectdata),
+                type:'json',
+                contentType: 'application/json',
+                method: "POST",
+                success: function(data){
+                    $('.tbody-data').html('');
+                    $(".dropdown-btn").css('display', 'block');
+                    var innerHTML;
+                    var count = 0;
+                    for(var i=0; i<data.length; i++){
+                        count = count + 1;
+                        innerHTML += '<tr>' +
+                            '<td>' + count + '</td>' +
+                            '<td><input name="prod_name" value="' + data[i].prod_name + '"/></td>' +
+                            '<td><input name="density" value="' + data[i].density + '"/></td>' +
+                            '<td><input name="rpm" value="' + data[i].rpm + '"/></td>' +
+                            '<td><input name="daily_prod_rate" value="' + data[i].daily_prod_rate + '"/></td>' +
+                            '<td style="text-align:center;">' +
+                                '<a href="#" id="delete_'+ count +'" onclick="deletedOrder(\'' + data[i].cust_name + '\',\'' + data[i].amount + '\')"><i class="fas fa-trash-alt"></i></a>' +
+                            '</td>' +
+                        '</tr>';
+                    }
+                    $('.tbody-data').html(innerHTML);
+                },
+                error: function(error){
+                    console.log(error)
+                }
+            });
+        });
+        return false;
+    }
+</script>
+{% endblock %}

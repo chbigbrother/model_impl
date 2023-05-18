@@ -1,0 +1,11 @@
+Yongbao Chen, Peng Xu, Yiyi Chu, Weilin Li, Yuntao Wu, Lizhou Ni, Yi Bao, Kun Wang,
+Short-term electrical load forecasting using the Support Vector Regression (SVR) model to calculate the demand response baseline for office buildings,
+Applied Energy,
+Volume 195,
+2017,
+Pages 659-670,
+ISSN 0306-2619,
+https://doi.org/10.1016/j.apenergy.2017.03.034.
+(https://www.sciencedirect.com/science/article/pii/S0306261917302581)
+Abstract: Demand Response (DR) aims at improving the operation efficiency of power plants and grids, and it constitutes an effective means of reducing grid risk during peak periods to ensure the safety of power supplies. One key challenge related to DR is the calculation of load baselines. A fair and accurate baseline serves as useful information for resource planners and system operators who wish to implement DR programs. In the meantime, baseline calculation cannot be too complex, and in most cases, only weather data input is permitted. Inspired by the strong non-linear capabilities of Support Vector Regression (SVR), this paper proposes a new SVR forecasting model with the ambient temperature of two hours before DR event as input variables. We use electricity loads for four typical office buildings as sample data to test the method. After analyzing the model prediction results, we find that the SVR model offers a higher degree of prediction accuracy and stability in short-term load forecasting compared to the other seven traditional forecasting models.
+Keywords: Demand respond; SVR model; Short-term baseline; Load forecasting

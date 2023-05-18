@@ -1,0 +1,51 @@
+{% extends "common/header.html" %}
+{% block content %}
+<style>
+    .card{
+        z-index: 0;
+    }
+    #progressbar li:before {
+        z-index:1;
+    }
+    .ms-parent.form-control {
+        width: 171.5% !important;
+    }
+</style>
+
+<div class="row justify-content-center" style="margin-top:-2.5rem !important;">
+    <div class="col-xl-12 px-0 pt-4 pb-0 mt-3 mb-3">
+        <div class="card">
+            <div class="card-body">
+                <input type="hidden" id="cust_name" value="{{ user.username }}">
+                <form id="form">
+
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--게시판 관련 js-->
+<!-- Page level plugins -->
+<script src="/static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/static/js/dropzone/dropzone.min.js"></script>
+<!-- Page level custom scripts -->
+<script src="/static/js/demo/datatables-demo.js"></script>
+<script src="/static/js/order/order-regist.js"></script>
+
+<script>
+    Dropzone.autoDiscover = false; // dropzone 초기화
+    function hasExtension(fileName, exts) {
+        return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
+    }
+    var fileName = "";
+
+    $(function(){
+        var ROOT_URL = "";
+        drawScreen();
+        orderRegistFuncs();
+
+    });
+</script>
+{% endblock %}

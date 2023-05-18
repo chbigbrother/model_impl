@@ -1,0 +1,241 @@
+{% extends "common/header.html" %}
+{% block content %}
+<div class="row">
+    <div class="col-lg-5">
+    <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">{{ user.groups.all.0.name }} &nbsp; 신뢰도</h6>
+            </div>
+            <div class="card-body">
+                <div class="col-md-6" id="service">
+                    <h5 class="pknu-h5">신뢰도</h5>
+                    <div class="star-rating" style="font-size:3em; width: 9em; margin-left:1.5em;">
+                        <input type="radio" id="5-stars" name="rating" value="5" disabled="true" />
+                        <label for="5-stars" class="star">&#9733;</label>
+                        <input type="radio" id="4-stars" name="rating" value="4" disabled="true" />
+                        <label for="4-stars" class="star">&#9733;</label>
+                        <input type="radio" id="3-stars" name="rating" value="3" disabled="true" />
+                        <label for="3-stars" class="star">&#9733;</label>
+                        <input type="radio" id="2-stars" name="rating" value="2" disabled="true" />
+                        <label for="2-stars" class="star">&#9733;</label>
+                        <input type="radio" id="1-star" name="rating" value="1" disabled="true" />
+                        <label for="1-star" class="star">&#9733;</label>
+                    </div>
+                    <div style="width:5em; margin-left:91%;">
+                    {% for comp in comp_list|slice:":1" %}
+                        <input type="hidden" id="comp_cred" value="{{ comp.credibility }}">
+                        <h5 style="text-align:center;">{{ comp.credibility }} / 5.0</h5>
+                    {% endfor %}
+                    </div>
+                </div>
+                <hr>
+                <div class="col-md-12" id="">
+                    <h5 class="pknu-h5">회사 정보</h5>
+                    {% for comp in comp_list|slice:":1" %}
+                    <div class="row pknu-row">
+                        <div class="col-lg-6" style="margin-bottom:0.5rem;"><h5>위치 :&nbsp; </h5></div>
+                        <div class="col-lg-6">
+                              <h5>{{ comp.address }}</h5>
+                        </div>
+                        <div class="col-lg-6" style="margin-bottom:0.5rem;"><h5>연락처 :&nbsp; </h5></div>
+                        <div class="col-lg-6" >
+                              <h5>{{ comp.contact }}</h5>
+                        </div>
+                        <div class="col-lg-6"><h5>이메일 :&nbsp; </h5></div>
+                        <div class="col-lg-6" >
+                              <h5>{{ comp.email }}</h5>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-7">
+        <!-- DataTales Example -->
+        <div class="card shadow mb-4">
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">조회</h6>
+                <div class="dropdown no-arrow" >
+                    <a href="{% url 'company:company.comp_facility_csv_download' %}" class="btn btn-success btn-icon-split">
+                        <span class="icon text-white-50">
+                            <i class="fas fa-check"></i>
+                        </span>
+                        <span class="text">데이터 다운로드</span>
+                    </a>
+                </div>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                        <thead>
+                            <tr>
+                                <th>번호</th>
+                                <th style="display:none;"></th>
+                                <th>설비명</th>
+                                <th style="display:none;"></th>
+                                <th style="text-align:center;">관리</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for comp in comp_list %}
+                            <tr>
+                                <td>{{ forloop.counter }}</td>
+                                <td class="compName" style="display:none;">{{ comp.comp_name }}</td>
+                                <td class="facNum">{{ comp.facility_name }} &nbsp; 호기</td>
+                                <td class="facilityId" style="display:none;">{{ comp.facility_id }}</td>
+                                <td style="text-align:center;">
+                                    <div class="action-buttons">
+                                        <a href="#" id="edit_{{ comp.id }}" class="btn btn-secondary light mr-2 editContBtn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="24px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                                    <path d="M8,17.9148182 L8,5.96685884 C8,5.56391781 8.16211443,5.17792052 8.44982609,4.89581508 L10.965708,2.42895648 C11.5426798,1.86322723 12.4640974,1.85620921 13.0496196,2.41308426 L15.5337377,4.77566479 C15.8314604,5.0588212 16,5.45170806 16,5.86258077 L16,17.9148182 C16,18.7432453 15.3284271,19.4148182 14.5,19.4148182 L9.5,19.4148182 C8.67157288,19.4148182 8,18.7432453 8,17.9148182 Z" fill="#000000" fill-rule="nonzero" transform="translate(12.000000, 10.707409) rotate(-135.000000) translate(-12.000000, -10.707409) "></path>
+                                                    <rect fill="#000000" opacity="0.3" x="5" y="20" width="15" height="2" rx="1"></rect>
+                                                </g>
+                                            </svg>
+                                        </a>
+                                        <a href="#" id="delete_{{ comp.id }}" class="btn btn-danger light deleteBtn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20px" height="20px" viewBox="0 0 24 24" version="1.1" class="svg-main-icon">
+                                                <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+                                                    <rect x="0" y="0" width="24" height="24"></rect>
+                                                    <path d="M6,8 L6,20.5 C6,21.3284271 6.67157288,22 7.5,22 L16.5,22 C17.3284271,22 18,21.3284271 18,20.5 L18,8 L6,8 Z" fill="#000000" fill-rule="nonzero"></path>
+                                                    <path d="M14,4.5 L14,4 C14,3.44771525 13.5522847,3 13,3 L11,3 C10.4477153,3 10,3.44771525 10,4 L10,4.5 L5.5,4.5 C5.22385763,4.5 5,4.72385763 5,5 L5,5.5 C5,5.77614237 5.22385763,6 5.5,6 L18.5,6 C18.7761424,6 19,5.77614237 19,5.5 L19,5 C19,4.72385763 18.7761424,4.5 18.5,4.5 L14,4.5 Z" fill="#000000" opacity="0.3"></path>
+                                                </g>
+                                            </svg>
+                                        </a>
+                                    <!--<a href="#" id="edit_{{ comp.id }}"><i class="far fa-edit {{ comp.id }}"></i></a>
+                                    <a href="#" id="delete_{{ comp.id }}" style="margin-left:10px;"><i class="fas fa-trash-alt"></i></a>-->
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ***************************************************************** 관리 Modal ***************************************************************** -->
+<div class="modal fade" id="editModal" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog2" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                    <h4 class="modal-title" id="exampleModalLabel">설비정보 관리</h4>
+                    <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+            <div class="modal-body">
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3"><label for="divCompName" class="pt-2">회사명</label></div>
+                    <div class="col-md-6" id="divCompName">
+                        <input class="form-control text-center" type="text" name="compName" id="compName" readonly="readonly"/>
+                    </div>
+                </div>
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3"><label for="facNum" class="pt-2" style="font-size:0.95rem;">설비호기</label></div>
+                    <div class="col-lg-6" >
+                         <input class="form-control text-center" type="text" name="facNum" id="facNum" />
+                    </div>
+                </div>
+                <input class="form-control text-center" type="hidden" name="facility_id" id="facility_id" />
+            </div>
+            <div class="modal-footer" id="htfooter">
+                <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" data-bs-dismiss="modal">
+                    <i class="far fa-window-close fa-sm text-white-50"></i> 취소
+                </button>
+                <a href="#" id="editBtn" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="far fa-paper-plane fa-sm text-white-50"></i> 수정
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- 관리 Modal END -->
+
+<!--게시판 관련 js-->
+<!-- Page level plugins -->
+<script src="/static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<!-- Page level custom scripts -->
+<script src="/static/js/demo/datatables-demo.js"></script>
+<!-- sweetalert 설치 후 사용가능
+     $ npm install sweetalert2 -->
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<!--게시판 관련 js-->
+<script>
+    $(function(){
+        var cred = $('#comp_cred').val();
+        cred = parseInt(cred);
+        $(':input:radio[name=rating]:checked').val();
+        $('input:radio[name=rating]:input[value=' + cred + ']').attr("checked", true);
+        // 삭제
+        var selectdata = new Object();
+        $('.deleteBtn').on('click', function(e){
+            var str = e.target.parentElement.id.split('_');
+            selectdata.id = str[1];
+            Swal.fire({
+              icon: 'error',
+              title: '삭제하시겠습니까?',
+              showCancelButton: true,
+              text: ''
+            }).then(function(){
+                $.ajax({
+                    url: "{% url 'company:delete' %}",
+                    data : JSON.stringify(selectdata),
+                    type:'json',
+                    contentType: 'application/json',
+                    method: "POST",
+                    success: function(data){
+                        location.reload();
+                    },
+                    error: function(error){
+                        console.log(error)
+                    }
+                });
+            });
+            return false;
+        });
+
+        $('.editContBtn').on('click', function(){
+            $('#editModal').modal('show');
+            /* Modal 내부 input 내용 */
+            var comp_name = $(this).parents().siblings('.compName')[0].innerText;
+            var facility_name = $(this).parents().siblings('.facNum')[0].innerText;
+            var facility_id = $(this).parents().siblings('.facilityId')[0].innerText;
+
+            $('#compName').val(comp_name);
+            $('#facNum').val(facility_name);
+            $('#facility_id').val(facility_id);
+            /* Modal 내부 input 내용 */
+
+            /* edit */
+            $('#editBtn').on('click', function(){
+                var obj = new Object();
+                obj.facility_name = $('#facNum').val();
+                obj.facility_id = $('#facility_id').val();
+
+                var url = "{% url 'company:company.fac_list_edit'%}";
+                $.ajax({
+                    url: url,
+                    method:'POST',
+                    contentType: false,
+                    processData: false,
+                    dataType :   "json",
+                    contentType :   "application/x-www-form-urlencoded; charset=UTF-8",
+                    data: JSON.stringify(obj),
+                    success: function(result){
+                        location.reload();
+                    }
+                });
+            });
+            /* edit */
+        });
+
+    });
+</script>
+{% endblock %}

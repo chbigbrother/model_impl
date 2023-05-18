@@ -1,0 +1,324 @@
+{% extends "common/header.html" %}
+{% block content %}
+<style>
+    .dataTables_wrapper .dataTables_filter {display:none;}
+    .pagination {display:none;}
+    .dataTables_info {display:none;}
+    input {border:none; width:100%; color:#858796;}
+</style>
+<div class="col-md-12 col-lg-12">
+    <div class="card">
+      <div class="card-header" style="margin-left:73%;">
+            <a href="#" class="btn btn-info btn-icon-split modal-upload-btn">
+                <span class="icon text-white-50">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span class="text">설비개별업로드</span>
+            </a>
+            <a href="#" class="btn btn-success btn-success-csv btn-icon-split upload-btn" style="margin-left:5%;">
+                <span class="icon text-white-50">
+                    <i class="fas fa-check"></i>
+                </span>
+                <span class="text">.csv 업로드</span>
+            </a>
+      </div>
+      <div class="card-table table-responsive">
+        <form id="orderForm" method="POST" action="{% url 'company:csvCreate' %}">
+            <table class="table table-vcenter">
+                <thead>
+                    <tr>
+                      <th>번호</th>
+                      <th>설비명</th>
+                      <th style="text-align:center;">관리</th>
+                    </tr>
+                </thead>
+                <tbody class="tbody-data">
+
+                </tbody>
+            </table>
+            <div class="dropdown dropdown-btn no-arrow" style="text-align:right;">
+                <button type="submit" value="OrderList" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">
+                    <i class="fas fa-upload fa-sm text-white-50"></i> 설비업로드
+                </button>
+            </div>
+        </form>
+      </div>
+    </div>
+</div>
+
+
+
+<!--<div class="card shadow mb-4">-->
+<!--    <div class="card-body">-->
+<!--        <div class="pknu-table-responsive">-->
+<!--            <div class="no-arrow no-arrow-btn" style="position:absolute; right:1.2%; z-index:100;">-->
+<!--                <a href="#" class="btn btn-info btn-icon-split modal-upload-btn">-->
+<!--                    <span class="icon text-white-50">-->
+<!--                        <i class="fas fa-check"></i>-->
+<!--                    </span>-->
+<!--                    <span class="text">설비개별업로드</span>-->
+<!--                </a>-->
+<!--                <a href="#" class="btn btn-success btn-success-csv btn-icon-split upload-btn">-->
+<!--                    <span class="icon text-white-50">-->
+<!--                        <i class="fas fa-check"></i>-->
+<!--                    </span>-->
+<!--                    <span class="text">.csv 업로드</span>-->
+<!--                </a>-->
+<!--            </div>-->
+<!--            <form id="orderForm" method="POST" action="{% url 'company:csvCreate' %}">-->
+<!--                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">-->
+<!--                    <thead>-->
+<!--                        <tr>-->
+<!--                            <th>번호</th>-->
+<!--                            <th>설비명</th>-->
+<!--                            <th style="text-align:center;">관리</th>-->
+<!--                        </tr>-->
+<!--                    </thead>-->
+<!--                    <tbody class="tbody-data">-->
+
+<!--                    </tbody>-->
+<!--                </table>-->
+<!--                <div class="dropdown dropdown-btn no-arrow" style="text-align:right;">-->
+<!--                    <button type="submit" value="OrderList" class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm">-->
+<!--                        <i class="fas fa-upload fa-sm text-white-50"></i> 설비업로드-->
+<!--                    </button>-->
+<!--                </div>-->
+<!--            </form>-->
+<!--        </div>-->
+<!--    </div>-->
+<!--</div>-->
+
+<!-- OrderUploadModal -->
+<div class="modal fade" id="uploadModal" role="dialog" aria-labelledby="uploadModal" aria-hidden="true" data-backdrop="static">
+    <div class="modal-dialog modal-dialog2" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h4 class="modal-title" id="exampleModalLabel">설비 등록</h4>
+                <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+            </div>
+            <div class="modal-body">
+                <div class="row pknu-modal-row">
+                    <div class="col-md-3"><label class="pt-2" style="font-size:0.95rem;">설비명</label></div>
+                    <div class="col-lg-6">
+                        <p class="modal-p">※ 호기 번호만 입력해 주세요.<p/><br/>
+                        <input class="form-control text-center" type="text" name="compname" id="compname" />
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer" id="modal-footer">
+                <button type="button" class="d-none d-sm-inline-block btn btn-sm btn-danger shadow-sm" data-bs-dismiss="modal">
+                    <i class="far fa-window-close fa-sm text-white-50"></i> 취소
+                </button>
+                <a class="d-none d-sm-inline-block btn btn-sm btn-primary shadow-sm" id="modal-upload">
+                    <i class="fas fa-upload fa-sm text-white-50"></i> 설비정보업로드
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- OrderUploadModal -->
+
+<!-- Modal-->
+<div class="modal fade" id="excelUploadModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" style="padding-right: 17px;" aria-modal="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <!--modal header-->
+            <div class="modal-header">
+                <h5 class="modal-title" id="">설비 정보 문서 등록</h5>
+                <button class="close" type="button" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">×</span>
+                </button>
+            </div>
+            <!--modal header-->
+            <!--modal body-->
+            <div class="modal-body">
+                <div class="modal-body">
+                    <div class="md-form mb-3">
+                        <div class="col-auto">
+                            <form action="#" class="dropzone" name="compDocDropzone" id="compDocDropzone" enctype="multipart/form-data">
+                                <div class="fallback">
+                                    <input type="file" name="file" />
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!--modal body-->
+            <!--modal footer-->
+            <div class="modal-footer">
+                <a href="{% url 'company:company.comp_csv_download_blank' %}" class="btn btn-info btn-icon-split upload-btn">
+                    <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                    </span>
+                    <span class="text">설비문서업로드양식다운로드</span>
+                </a>
+                <button class="btn btn-secondary" type="button" data-bs-dismiss="modal">취소</button>
+                <button type="button" class="btn btn-primary" id="fileReadBtn">업로드</button>
+            </div>
+            <!--modal footer-->
+        </div>
+    </div>
+</div>
+<!-- Modal-->
+<!--게시판 관련 js-->
+<!-- Page level plugins -->
+<script src="/static/vendor/datatables/jquery.dataTables.min.js"></script>
+<script src="/static/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+<script src="/static/js/dropzone/dropzone.min.js"></script>
+<!-- Page level custom scripts -->
+<script src="/static/js/demo/datatables-demo.js"></script>
+
+<script>
+    Dropzone.autoDiscover = false; // dropzone 초기화
+    function hasExtension(fileName, exts) {
+        return (new RegExp('(' + exts.join('|').replace(/\./g, '\\.') + ')$')).test(fileName);
+    }
+    var fileName = "";
+    $(function(){
+        $(".dropdown-btn").css('display', 'none');
+
+        // csv 업로드
+        var _url = "{% url 'company:company.comp_read_csv' %}";
+
+        var formData = new FormData();
+        //dropzone에 파일등록
+        var dropzone = new Dropzone("#compDocDropzone", {
+            url: "{% url 'company:upload' %}",
+            addRemoveLinks: true,
+            maxFiles: 1,
+            init: function(e) {
+                // 파일 업로드 성공 시
+                this.on('success', function(file) {
+                    formData.append("file", dropzone.getAcceptedFiles()[0]);
+                    fileName = file.name;
+                    //확장자 체크(작업장별 다름)
+                    if(!hasExtension(fileName, ['csv'])){
+                        Swal.fire({
+                          icon: 'error',
+                          title: '파일 형식 오류',
+                          text: '.csv 파일을 업로드 해 주세요.',
+                        });
+                        return false;
+                    }
+                });
+
+            }
+        });
+        // 설비 정보 업로드 버튼
+        $('.modal-upload-btn').on('click', function(){
+            $('#uploadModal').modal({backdrop: 'static', keyboard: false})
+            $("#uploadModal").modal("show");
+        });
+        // .csv 업로드 버튼
+        $('.upload-btn').on('click', function(){
+            $('#excelUploadModal').modal({backdrop: 'static', keyboard: false})
+            $("#excelUploadModal").modal("show");
+        });
+
+        // 설비 정보 업로드 버튼 설비정보업로드 버튼 클릭 이벤트
+        $("#modal-upload").on("click", function(){
+            var obj = new Object();
+            obj.comp_name = $('#compname').val();
+
+            $.ajax({
+                url: "{% url 'company:company.comp_update_modal' %}",
+                data : JSON.stringify(obj),
+                type:'json',
+                contentType: 'application/json',
+                method: "POST",
+                success: function(data){
+                    $(location).attr('href', "{% url 'company:company.list' %}")
+                }
+            })
+        });
+
+        $("#fileReadBtn").on("click", function(e){
+            $.ajax({
+                url: _url,
+                method:'POST',
+                contentType: false,
+                processData: false,
+                data: formData,
+                success: function(result){
+                    $(".dropdown-btn").css('display', 'block');
+                    $(".upload-btn").css('display', 'none');
+                    var innerHTML;
+                    var count = 0;
+                    for(var i=0; i<result.length; i++){
+                        count = count + 1;
+                        innerHTML += '<tr>' +
+                            '<td>' + count + '</td>' +
+                            '<td><input name="facility_name" value="' + result[i].facility_name + '"/></td>' +
+                            '<td style="text-align:center;">' +
+                                '<a href="#" id="delete_'+ count +'" onclick="deletedOrder(\'' + result[i].prod_name + '\',\'' + result[i].density + '\')"><i class="fas fa-trash-alt"></i></a>' +
+                            '</td>' +
+                        '</tr>';
+                    }
+                    $('.tbody-data').html(innerHTML);
+                    if(result.message == 'error'){
+                        Swal.fire({
+                          icon: 'error',
+                          title: '파일 형식 오류',
+                          text: '데이터 항목을 형식에 맞춘 후 업로드 해 주세요.',
+                          footer: '<a href="">형식 다운로드</a>'
+                        });
+                        return false;
+                    } else {
+                        $('#excelUploadModal').modal('hide');
+                    }
+                },
+                error: function(error){
+                    console.log(error);
+                    // $('#css-loader').removeClass("is-active");
+                }
+            });
+        });
+
+        $('#form').attr('action',"{% url 'order:order.csvCreate' %}").submit();
+    });
+    function deletedOrder(name, amount){
+        var selectdata = new Object();
+        selectdata.name = name;
+        selectdata.amount = amount;
+        selectdata.fileName = fileName;
+        Swal.fire({
+          icon: 'error',
+          title: '삭제하시겠습니까?',
+          showCancelButton: true,
+          text: ''
+        }).then(function(){
+            $.ajax({
+                url: "{% url 'order:order.order_delete_read_csv' %}",
+                data : JSON.stringify(selectdata),
+                type:'json',
+                contentType: 'application/json',
+                method: "POST",
+                success: function(data){
+                    $('.tbody-data').html('');
+                    $(".dropdown-btn").css('display', 'block');
+                    var innerHTML;
+                    var count = 0;
+                    for(var i=0; i<data.length; i++){
+                        count = count + 1;
+                        innerHTML += '<tr>' +
+                            '<td>' + count + '</td>' +
+                            '<td><input name="facility_name" value="' + data[i].facility_name + '"/></td>' +
+                            '<td style="text-align:center;">' +
+                                '<a href="#" id="delete_'+ count +'" onclick="deletedOrder(\'' + data[i].cust_name + '\',\'' + data[i].amount + '\')"><i class="fas fa-trash-alt"></i></a>' +
+                            '</td>' +
+                        '</tr>';
+                    }
+                    $('.tbody-data').html(innerHTML);
+                },
+                error: function(error){
+                    console.log(error)
+                }
+            });
+        });
+        return false;
+    }
+</script>
+{% endblock %}
